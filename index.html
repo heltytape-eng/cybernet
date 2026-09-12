@@ -2,13 +2,12 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- ИСПРАВЛЕНО ПО СОВЕТУ ДЕНИСА: Убран ошибочный параметр user-select, ломавший загрузку head! -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>CYBER_NET // VK_EDITION_2026</title>
-    <!-- Официальная мобильная библиотека ВК -->
+    <!-- Официальная минимизированная библиотека ВК -->
     <script src="https://unpkg.com"></script>
     <script>
-        // Инициализация выстреливает мгновенно при чтении head
+        // МГНОВЕННЫЙ СТАРТ: Инициализация выстреливает на первой миллисекунде
         try {
             if (typeof window.vkBridge !== 'undefined' && window.vkBridge !== null) {
                 window.vkBridge.send('VKWebAppInit');
@@ -383,6 +382,8 @@
 
         if (localStorage.getItem('cyberCleanSave')) { try { const s = JSON.parse(localStorage.getItem('cyberCleanSave')); if (s && typeof s.coins === 'number') { gameState = s; } } catch(e) {} }
         setInterval(() => localStorage.setItem('cyberCleanSave', JSON.stringify(gameState)), 5000); 
+        
+        // ПРИНУДИТЕЛЬНЫЙ ВЫЗОВ ИНТЕРФЕЙСА: Стирает серый кружок и открывает игру мгновенно!
         recalculateCPS(); checkRank(); updateUI();
     </script>
 </body>
