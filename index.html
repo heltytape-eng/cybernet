@@ -4,28 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
     <title>CYBER_NET // VK_EDITION_2026</title>
-    <!-- Подключаем минифицированную мобильную библиотеку ВК -->
+    <!-- ИСПРАВЛЕННАЯ СТРОЧКА ОТ ДЕНИСА: ТЕПЕРЬ ВСЁ ПОДКЛЮЧЕНО ПРАВИЛЬНО -->
     <script src="https://unpkg.com"></script>
     <script>
-        // УЛЬТРА-ИНЖЕКТ: Вызываем инициализацию через все возможные глобальные объекты разом!
-        (function() {
-            try {
-                // Вариант 1: Через стандартное окно
-                if (typeof window.vkBridge !== 'undefined' && window.vkBridge !== null) {
-                    window.vkBridge.send('VKWebAppInit');
-                }
-                // Вариант 2: Прямой вызов объекта (как создаёт browser.min.js)
-                if (typeof vkBridge !== 'undefined' && vkBridge !== null) {
-                    vkBridge.send('VKWebAppInit');
-                }
-                // Вариант 3: Резервный вызов для старых WebView
-                if (window.AndroidBridge && window.AndroidBridge.VKWebAppInit) {
-                    vkBridge.send('VKWebAppInit');
-                }
-            } catch(e) {
-                console.log("Автономный обход блокировки ВК");
+        // Инициализация выстреливает мгновенно при чтении head
+        try {
+            if (typeof window.vkBridge !== 'undefined' && window.vkBridge !== null) {
+                window.vkBridge.send('VKWebAppInit');
+            } else if (typeof vkBridge !== 'undefined') {
+                vkBridge.send('VKWebAppInit');
             }
-        })();
+        } catch(e) {
+            console.log("ВК Старт в автономном режиме");
+        }
     </script>
     <style>
         @import url('https://googleapis.com');
@@ -35,7 +26,6 @@
         body.theme-anon { --neon: #32cd32; --neon-dim: rgba(50,205,50,0.15); }
         body.theme-synd { --neon: #ba55d3; --neon-dim: rgba(186,85,211,0.15); }
         body.theme-red { --neon: #ff0055; --neon-dim: rgba(255,0,85,0.15); }
-
         body {
             background-color: #020204; color: var(--neon);
             display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 8px; overflow-x: hidden; position: relative;
