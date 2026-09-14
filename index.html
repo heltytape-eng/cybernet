@@ -385,7 +385,13 @@
         setInterval(() => localStorage.setItem('cyberCleanSave', JSON.stringify(gameState)), 5000); 
         
         // ПРИНУДИТЕЛЬНЫЙ ВЫЗОВ ИНТЕРФЕЙСА: Стирает серый кружок и открывает игру мгновенно!
-        recalculateCPS(); checkRank(); updateUI();
+        // Принудительно включаем интерфейс игры сразу, игнорируя любые задержки
+window.onload = function() {
+    recalculateCPS();
+    checkRank();
+    updateUI();
+};
+
     </script>
 </body>
 </html>
