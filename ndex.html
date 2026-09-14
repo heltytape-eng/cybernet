@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <!-- Viewport кристально чистый, без запрещенных параметров user-select -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>CYBER_TEST_2026</title>
+    
+    <!-- Подключаем стабильную мобильную библиотеку ВК -->
+    <script src="https://unpkg.com"></script>
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        html, body {
+            background-color: #0a0a12; color: #00ffcc;
+            width: 100%; height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
+        }
+        #test-container {
+            text-align: center; padding: 20px;
+            border: 2px solid #00ffcc; background: rgba(0,0,0,0.4);
+            box-shadow: 0 0 20px rgba(0,255,204,0.3); max-width: 90%; width: 320px;
+        }
+        h1 { font-size: 20px; margin-bottom: 10px; letter-spacing: 1px; }
+        #status-log { font-size: 12px; color: #8899aa; margin-bottom: 20px; min-height: 16px; }
+        #click-btn {
+            background: transparent; border: 2px solid #ff0055; color: #ff0055;
+            padding: 15px 30px; font-size: 16px; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; box-shadow: 0 0 10px rgba(255,0,85,0.2);
+            transition: transform 0.1s, background 0.2s;
+        }
+        #click-btn:active { transform: scale(0.95); background: rgba(255,0,85,0.1); }
+        #counter-txt { font-size: 24px; margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="test-container">
+        <h1>CYBER // TEST_NODE</h1>
+        <div id="status-log">ОЖИДАНИЕ ИНИЦИАЛИЗАЦИИ ВК...</div>
+        
+        <button id="click-btn" onclick="triggerTestClick()">[ ХАКНУТЬ ЯДРО ]</button>
+        <div id="counter-txt">00000000</div>
+    </div>
+
+    <script>
+        let testScore = 0;
+
+        function updateLog(text) {
+            document.getElementById('status-log').innerText = ">> " + text;
+        }
+
+        function triggerTestClick() {
+            testScore += 1;
+            document.getElementById('counter-txt').innerText = testScore.toString().padStart(8, '0');
+            updateLog("ПАКЕТ ДАННЫХ ОТПРАВЛЕН");
+        }
+
+        // ЖЕСТКИЙ АВТОНОМНЫЙ СТАРТ: Запускаем авторизацию моста строго по докам ВК 2026 года
+        (function() {
+            updateLog("ИНЖЕКТ VK_BRIDGE...");
+            try {
+                // Ищем объект моста во всех глобальных пространствах
+                const bridge = window.vkBridge || vkBridge;
+                
+                if (bridge && typeof bridge.send === 'function') {
+                    bridge.send('VKWebAppInit')
+                        .then((data) => {
+                            if (data && data.result) {
+                                updateLog("МОСТ СВЯЗАН. СИСТЕМА СТАБИЛЬНА");
+                                console.log("VK Bridge Init Success");
+                            }
+                        })
+                        .catch((error) => {
+                            updateLog("СБОЙ ОТВЕТА ВК ПЛАТФОРМЫ");
+                            console.error(error);
+                        });
+                } else {
+                    updateLog("ОШИБКА: ОБЪЕКТ VK_BRIDGE НЕ НАЙДЕН");
+                }
+            } catch (e) {
+                updateLog("КРИТИЧЕСКИЙ СБОЙ WebView");
+                console.error(e);
+            }
+        })();
+    </script>
+</body>
+</html>
