@@ -2,22 +2,25 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- Убран ошибочный параметр user-select, ломавший WebView -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>CYBER_NET // VK_EDITION_2026</title>
-    <!-- Официальная и самая стабильная мобильная библиотека моста ВК -->
-   <script src="https://vk.com"></script>
+    <!-- Официальная библиотека ВК Bridge строго из CDN -->
+    <script src="https://unpkg.com"></script>
     <script>
-        // МГНОВЕННЫЙ СТАРТ: Сигнал авторизации улетает на первой миллисекунде, как требует модератор ВК!
-        try {
-            if (typeof window.vkBridge !== 'undefined' && window.vkBridge !== null) {
-                window.vkBridge.send('VKWebAppInit');
-            } else if (typeof vkBridge !== 'undefined') {
-                vkBridge.send('VKWebAppInit');
-            }
-        } catch(e) {
-            console.log("ВК Старт в автономном режиме");
+        // ИСПРАВЛЕНИЕ ИЗ КОДА ВК: Принудительный пересчет размеров фрейма, чтобы убрать серый кружок!
+        function onAppResize() {
+            try {
+                if (typeof window.vkBridge !== 'undefined' && window.vkBridge !== null) {
+                    window.vkBridge.send('VKWebAppInit');
+                } else if (typeof vkBridge !== 'undefined') {
+                    vkBridge.send('VKWebAppInit');
+                }
+            } catch(e) { console.log(e); }
         }
+        
+        // МГНОВЕННЫЙ ЗАПУСК
+        onAppResize();
+        window.addEventListener('resize', onAppResize);
     </script>
     <style>
         @import url('https://googleapis.com');
@@ -28,9 +31,11 @@
         body.theme-synd { --neon: #ba55d3; --neon-dim: rgba(186,85,211,0.15); }
         body.theme-red { --neon: #ff0055; --neon-dim: rgba(255,0,85,0.15); }
 
-        body {
-            background-color: #020204; color: var(--neon);
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 8px; overflow-x: hidden; position: relative;
+        html, body {
+            background-color: #020204 !important; color: var(--neon);
+            width: 100% !important; height: 100vh !important; margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center; overflow: hidden !important;
+            position: relative; z-index: 999999 !important; opacity: 1 !important; visibility: visible !important;
         }
         
         body.overclock-active { animation: goldPulse 1.5s infinite alternate !important; }
@@ -40,10 +45,9 @@
 
         #matrix-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.12; pointer-events: none; }
         
-        /* Исправлена высота контейнера под фреймы ВКонтакте, чтобы кнопки не сжимались в ноль */
         #main-container { 
-            width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 8px; 
-            margin: 0 auto; padding: 4px; min-height: 600px !important; height: auto; justify-content: flex-start; z-index: 99999 !important; position: relative;
+            width: 100%; max-width: 420px; height: 100vh !important; display: flex; flex-direction: column; gap: 6px; 
+            margin: 0 auto; padding: 8px; justify-content: flex-start; z-index: 999999 !important; position: relative; background: #020204;
         }
         #score-container { border: 1px solid var(--neon); padding: 8px; background: rgba(0, 0, 0, 0.6); text-align: center; backdrop-filter: blur(4px); box-shadow: 0 0 12px var(--neon-dim); }
         #rank-display { font-size: 11px; color: #ff0055; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 5px #ff0055; }
@@ -389,12 +393,12 @@
         if (localStorage.getItem('cyberCleanSave')) { try { const s = JSON.parse(localStorage.getItem('cyberCleanSave')); if (s && typeof s.coins === 'number') { gameState = s; } } catch(e) {} }
         setInterval(() => localStorage.setItem('cyberCleanSave', JSON.stringify(gameState)), 5000); 
         
-        // ГАРАНТИРОВАННЫЙ СТАРТ ПОСЛЕ ЗАГРУЗКИ ОКНА
-       recalculateCPS();
-checkRank();
-updateUI();
-console.log("ready_window");
-
+        // СИНХРОННЫЙ СТАРТ ИНТЕРФЕЙСА: Перезаписываем размеры и запускаем UI мгновенно в обход любых тайм-аутов
+        recalculateCPS(); 
+        checkRank(); 
+        updateUI();
+        console.log("ready_window");
     </script>
 </body>
 </html>
+
