@@ -2,12 +2,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <!-- Убран ошибочный параметр user-select, ломавший WebView -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>CYBER_NET // VK_EDITION_2026</title>
-    <!-- Официальная минимизированная библиотека ВК -->
+    <!-- Официальная и самая стабильная мобильная библиотека моста ВК -->
     <script src="https://unpkg.com"></script>
     <script>
-        // МГНОВЕННЫЙ СТАРТ: Инициализация выстреливает на первой миллисекунде
+        // МГНОВЕННЫЙ СТАРТ: Сигнал авторизации улетает на первой миллисекунде, как требует модератор ВК!
         try {
             if (typeof window.vkBridge !== 'undefined' && window.vkBridge !== null) {
                 window.vkBridge.send('VKWebAppInit');
@@ -26,6 +27,7 @@
         body.theme-anon { --neon: #32cd32; --neon-dim: rgba(50,205,50,0.15); }
         body.theme-synd { --neon: #ba55d3; --neon-dim: rgba(186,85,211,0.15); }
         body.theme-red { --neon: #ff0055; --neon-dim: rgba(255,0,85,0.15); }
+
         body {
             background-color: #020204; color: var(--neon);
             display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 8px; overflow-x: hidden; position: relative;
@@ -38,13 +40,11 @@
 
         #matrix-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.12; pointer-events: none; }
         
-                       #main-container { 
+        /* Исправлена высота контейнера под фреймы ВКонтакте, чтобы кнопки не сжимались в ноль */
+        #main-container { 
             width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 8px; 
             margin: 0 auto; padding: 4px; min-height: 600px !important; height: auto; justify-content: flex-start; z-index: 99999 !important; position: relative;
         }
-
-
-
         #score-container { border: 1px solid var(--neon); padding: 8px; background: rgba(0, 0, 0, 0.6); text-align: center; backdrop-filter: blur(4px); box-shadow: 0 0 12px var(--neon-dim); }
         #rank-display { font-size: 11px; color: #ff0055; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 5px #ff0055; }
         #score { font-size: 34px; font-weight: bold; text-shadow: 0 0 10px var(--neon); letter-spacing: 1px; margin: 2px 0; }
@@ -66,6 +66,7 @@
 
         .floating-code { position: absolute; font-size: 15px; font-weight: bold; pointer-events: none; animation: matrixRise 0.5s cubic-bezier(0.08, 0.8, 0.3, 1) forwards; color: var(--neon); text-shadow: 0 0 4px var(--neon); z-index: 10; }
         @keyframes matrixRise { 0% { opacity: 1; transform: translateY(0) scale(1.1); } 100% { opacity: 0; transform: translateY(-65px) scale(0.7); } }
+
         .tab-window { border: 1px solid #ff0055; padding: 8px; background: rgba(3, 3, 6, 0.96); display: none; flex-direction: column; gap: 5px; height: 185px; min-height: 185px; backdrop-filter: blur(8px); box-shadow: 0 0 12px rgba(255, 0, 85, 0.15); opacity: 0; transform: translateY(5px); transition: opacity 0.2s; width: 100%; }
         .tab-window.active { display: flex; opacity: 1; transform: translateY(0); }
         .window-title { font-size: 11px; color: #ff0055; border-bottom: 1px solid rgba(255, 0, 85, 0.3); padding-bottom: 2px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
@@ -82,6 +83,7 @@
         .scroll-grid { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; height: 100%; padding-right: 2px; }
         .scroll-grid::-webkit-scrollbar { width: 3px; }
         .scroll-grid::-webkit-scrollbar-thumb { background: var(--neon); }
+
         .upgrade-btn { display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--neon-dim); padding: 6px 8px; cursor: pointer; background: rgba(0, 255, 204, 0.01); transition: all 0.15s; }
         .upgrade-btn:hover:not(.disabled) { background: var(--neon-dim); border-color: var(--neon); }
         .upgrade-btn.disabled { opacity: 0.12; cursor: not-allowed; border-color: #333; }
@@ -130,6 +132,7 @@
                 <div class="upgrade-btn" id="upg-server" onclick="buyUpgrade('server')"><span class="upgrade-name">> MAINFRAME.NET (+20/s)</span><span class="upgrade-cost" id="cost-server">1000</span></div>
             </div>
         </div>
+
         <!-- ВКЛАДКА 2: Биржа -->
         <div class="tab-window" id="win-crypto">
             <div class="window-title">// Рынок акций & Токенов</div>
@@ -215,6 +218,7 @@
             { name: {ru:"Шлюз Китая"}, req: 12000, reward: 38000, time: 12 },
             { name: {ru:"Ядро Квантового ИИ"}, req: 100000, reward: 320000, time: 18 }
         ];
+
         function writeLog(text) { document.getElementById('console-panel').innerText = "> " + text; }
 
         const canvas = document.getElementById('matrix-canvas'); const ctx = canvas.getContext('2d'); let columns = [];
@@ -385,14 +389,13 @@
         if (localStorage.getItem('cyberCleanSave')) { try { const s = JSON.parse(localStorage.getItem('cyberCleanSave')); if (s && typeof s.coins === 'number') { gameState = s; } } catch(e) {} }
         setInterval(() => localStorage.setItem('cyberCleanSave', JSON.stringify(gameState)), 5000); 
         
-        // ПРИНУДИТЕЛЬНЫЙ ВЫЗОВ ИНТЕРФЕЙСА: Стирает серый кружок и открывает игру мгновенно!
-        // Принудительно включаем интерфейс игры сразу, игнорируя любые задержки
-window.onload = function() {
-    recalculateCPS();
-    checkRank();
-    updateUI();
-};
-
+        // ГАРАНТИРОВАННЫЙ СТАРТ ПОСЛЕ ЗАГРУЗКИ ОКНА
+        window.onload = function() {
+            recalculateCPS();
+            checkRank();
+            updateUI();
+            console.log("ready_window");
+        };
     </script>
 </body>
 </html>
