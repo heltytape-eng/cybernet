@@ -390,12 +390,11 @@
         setInterval(() => localStorage.setItem('cyberCleanSave', JSON.stringify(gameState)), 5000); 
         
         // ГАРАНТИРОВАННЫЙ СТАРТ ПОСЛЕ ЗАГРУЗКИ ОКНА
-        window.onload = function() {
-            recalculateCPS();
-            checkRank();
-            updateUI();
-            console.log("ready_window");
-        };
+       recalculateCPS();
+checkRank();
+updateUI();
+console.log("ready_window");
+
     </script>
 </body>
 </html>
